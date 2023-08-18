@@ -24,8 +24,18 @@ const createAppointment = async ()=>{
 
 booking.addEventListener('click',createAppointment)
 
- function deleteAppointment(e){
-   console.log(e.target.id);
+ const deleteAppointment = async (e)=>{
+    let id = e.target.id;
+    axios.delete(`https://crudcrud.com/api/94b66272c89a47668d5b21ab7e79952b/newappointments/${id}`)
+     .then((res)=>{
+       if(res.status==200){
+        let element = document.getElementById(e.target.id).parentElement;
+        element.remove();
+       }
+     })
+     .catch((err)=>{
+      console.log('Cannot delte user',err);
+     })
 }
  function updateAppointment(e){
   console.log(e.target.id);
