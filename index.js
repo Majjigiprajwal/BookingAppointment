@@ -1,29 +1,65 @@
-document.getElementById('Book').addEventListener('click',addUser);
 
 
-function showData(res){
-  var element = document.getElementById('users');
-    element.innerHTML += `<li>${res.Name}-${res.Email}-${res.Address}</li>
-    <button>Update</button>
-    <button>Cancel</buttom>`
+const booking = document.getElementById('book');
+const appointmentList= document.getElementById('appointment-lists');
+document.addEventListener('DOMContentLoaded',fetchAppointments);
+
+
+
+const createAppointment = async ()=>{
+     console.log('')
+    let name = document.getElementById('name').value;
+    let email = document.getElementById('email').value;
+    let address = document.getElementById('address').value;
+    const data ={
+      name:name,
+      email:email,
+      address:address
+    }
+      let response = await  axios.post('https://crudcrud.com/api/94b66272c89a47668d5b21ab7e79952b/newappointments',data)
+      fetchAppointments()
+      console.log(response.data);
+      return response;
 }
 
-function addUser(){
-  let name = document.getElementById('Name').value;
-  let email = document.getElementById('Email').value;
-  let address =document.getElementById('Address').value;
-  const data ={
-    Name:name,
-    Email:email,
-    Address:address
-  }
+booking.addEventListener('click',createAppointment)
 
-  axios.post('https://crudcrud.com/api/94b66272c89a47668d5b21ab7e79952b/bookings',data)
-   .then((res)=>{
-    showData(res.data)
-    console.log(res.data);
-   })
-   .catch((err)=>{
-    console.log(err);
-   })
+ function deleteAppointment(e){
+   console.log(e.target.id);
+}
+ function updateAppointment(e){
+  console.log(e.target.id);
+}
+
+async function fetchAppointments(){
+  try{
+    const response = await axios.get('https://crudcrud.com/api/94b66272c89a47668d5b21ab7e79952b/newappointments');
+    const appointments = response.data;
+
+    appointments.forEach((appointment)=>{
+      const div = document.createElement('div');
+      const content = document.createElement('p');
+      content.textContent=`${appointment.name}-${appointment.email}-${appointment.address}`
+      div.appendChild(content);
+      const updateButton = document.createElement('button');
+      updateButton.textContent="Update"
+      updateButton.className="update-btn"
+      updateButton.id=appointment._id
+      div.appendChild(updateButton)
+
+      const deleteButton = document.createElement('button')
+      deleteButton.textContent="Delete"
+      deleteButton.className="Delete-btn"
+      deleteButton.id=appointment._id
+      div.appendChild(deleteButton)
+
+      deleteButton.addEventListener('click',deleteAppointment);
+
+      updateButton.addEventListener('click',updateAppointment);
+      appointmentList.appendChild(div);
+    })
+  }
+  catch(error){
+    console.log(error);
+  }
 }
